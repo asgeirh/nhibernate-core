@@ -85,15 +85,17 @@ namespace NHibernate.Dialect
 			get { return "default values"; }
 		}
 
-		/// <summary>
-		/// PostgreSQL 8.1 and above defined the fuction <c>lastval()</c> that returns the
-		/// value of the last sequence that <c>nextval()</c> was used on in the current session.
-		/// Call <c>lastval()</c> if <c>nextval()</c> has not yet been called in the current
-		/// session throw an exception.
+		/// <summary> 
+		/// Get the select command to use to retrieve the last generated IDENTITY
+		/// value for a particular table 
 		/// </summary>
-		public override string IdentitySelectString
+		/// <param name="tableName">The table into which the insert was done </param>
+		/// <param name="identityColumn">The PK column. </param>
+		/// <param name="type">The <see cref="DbType"/> type code. </param>
+		/// <returns> The appropriate select command </returns>
+		public override string GetIdentitySelectString(string identityColumn, string tableName, DbType type)
 		{
-			get { return "select lastval()"; }
+			return "select currval('" + tableName + '_' + identityColumn + "_seq')";
 		}
 
 		public override SqlString AppendIdentitySelectToInsert(SqlString insertSql)
